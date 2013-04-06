@@ -11,10 +11,10 @@
         this.output = output;
         if (n !== '') {
             this.number = n;
-            this.output.innerText = localStorage.getItem('history') || '';
+            this.output.innerHTML = localStorage.getItem('history') || '';
         } else {
             this.number = this.random();
-            this.output.innerText = '';
+            this.output.innerHTML = '';
             localStorage.setItem('number',this.number);
         }
         window.console.log(this.number);
@@ -79,7 +79,7 @@
     Game.prototype.write = function (a) {
         if ((!a) || (a.length === 0)) { return; }
         window.console.log(a);
-        var text = this.output.innerText,
+        var text = this.output.innerHTML,
             s = a[0]+': ';
         if (a[1] === 4) {
             s += 'bingo!';
@@ -93,7 +93,7 @@
             s += a[1]+' b '+a[2]+' c';
         }
         this.output.innerHTML = s+'\n'+text;
-        window.localStorage.setItem('history',this.output.innerText);
+        window.localStorage.setItem('history',this.output.innerHTML);
         this.input.value = '';
     };
     
