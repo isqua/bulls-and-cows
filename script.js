@@ -18,15 +18,16 @@
             localStorage.setItem('number',this.number);
         }
         window.console.log(this.number);
-        input.addEventListener('keyup', function(e) {
-            e.stopPropagation();
-            e.preventDefault();
-            if (parseInt(e.keyCode,10) === 13) {
+        this.handler = function(event) {
+            event.stopPropagation();
+            event.preventDefault();
+            if (parseInt(event.keyCode, 10) === 13) {
                 game.write(game.check(this.value));
             }
-        }, false);
+        };
+        input.addEventListener('keyup', this.handler, false);
     };
-
+    
     Game.prototype.random = function() {
         var a,l,i,s='',str = this.base+'';
         l = str.length;
@@ -95,6 +96,11 @@
         this.output.innerHTML = s+'\n'+text;
         window.localStorage.setItem('history',this.output.innerHTML);
         this.input.value = '';
+    };
+
+    Game.prototype.clear = function () {
+        window.localStorage.clear();
+        this.input.removeEventListener('keyup', this.handler, false);
     };
     
     window.Game = Game;

@@ -81,7 +81,7 @@
     <script>
         var game = new Game(document.querySelector('#input'),document.querySelector('#output'));
         document.querySelector('#new').addEventListener('click', function() {
-            window.localStorage.clear();
+            game.clear();
             game = new Game(document.querySelector('#input'),document.querySelector('#output'));
         }, false);
     </script>
