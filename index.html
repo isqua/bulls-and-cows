@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Bulls & Cows</title>
+  <link href='http://fonts.googleapis.com/css?family=PT+Mono' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <form name="settings">
+    <input tabindex="3" name="number" type="number" min="3" max="8" value="4">
+    <input tabindex="4" name="base" type="text" pattern="^[0-9a-zA-Z]{4,}$" value="0123456789">
+    <button tabindex="5" type="submit" name="start">Start</button>
+    <button tabindex="6" type="reset" name="default">Default</button>
+  </form>
+  <form name="puzzle">
+    <input tabindex="1" autocomplete="off" name="guess" type="text" value="" autofocus>
+    <button tabindex="2" type="submit" name="check">Check</button>
+    <ul class="output" id="output">
+    </ul>
+  </form>
+  <script src="script.js"></script>
+  <script>
+    Game(document.forms.settings, document.forms.puzzle);
+  </script> 
+</body>
+</html>
