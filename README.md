@@ -20,6 +20,6 @@ digits placed on different positions.
 ```
 Computer: 1945
 You:      1492
-Answer:   1 b 2 c
+Answer:   1b, 2c
 (The bull is “1”, the cows are “4 and “9”)
 ```
