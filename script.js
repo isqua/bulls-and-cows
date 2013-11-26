@@ -23,12 +23,15 @@
   },
 
   generateNumber = function (base, length) {
-    var i, sign,
-    number = '', 
-    used = {};
+    var i, sign, number, used = {};
 
-    for (i = 0; i < length; i++) {
+    do {
+      sign = Math.floor(Math.random() * base.length);
+    } while (sign === 0);
+    used[sign] = true;
+    number = base[sign];
 
+    for (i = 1; i < length; i++) {
       do {
         sign = Math.floor(Math.random() * base.length);
       } while (used[sign]);
@@ -77,7 +80,7 @@
     reg = new RegExp("^["+base+"]{"+length+"}$");
 
     check = function (guess) {
-      if (reg.test(guess) && isUnique(guess)) {
+      if (reg.test(guess) && guess[0] !== base[0] && isUnique(guess)) {
         return getAnimals(guess, number);
       } else {
         return false;
