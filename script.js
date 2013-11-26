@@ -112,9 +112,7 @@
     put = write(output),
     restart = function() {
       output.innerHTML = '';
-      guess.value = '';
       resetStorage();
-      guess.focus();
       game = start();
     },
 
@@ -123,6 +121,8 @@
       base = elements.base.value,
       length = elements.number.value;
       result = checker(base, length, saved);
+      guess.value = '';
+      guess.focus();
       save('base', base);
       save('length', length);
       return result;
@@ -134,13 +134,14 @@
     if (length) {
       elements.number.value = length;
     }
+
     game = start(number);
 
     output.innerHTML = restore('output') || '';
 
     on(settings, 'submit', function (event) {
       event.preventDefault();
-      game = start();
+      restart();
     });
 
     on(settings, 'reset', function (event) {
@@ -157,9 +158,11 @@
             restart();
           }
         }
+        guess.value = '';
       } else {
         alert('Invalid number');
       }
+      guess.focus();
     });
 
   };
