@@ -1,7 +1,7 @@
 Bulls and cows
 ==============
 
-[Play now](http://isquariel.github.io/bulls-and-cows/)!
+[Play now](http://isqua.github.io/bulls-and-cows/)!
 
 How to play
 -----------
