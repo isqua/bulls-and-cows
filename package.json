@@ -1,15 +1,23 @@
 {
-    "name": "bulls-and-cows"
-  , "version": "0.0.1"
-  , "homepage": "http://isquariel.github.io/bulls-and-cows"
-  , "private": true
-  , "engines": {
-      "node": "0.10.x"
-    }
-  , "dependencies": {
-      "coffee-script": "1.6.x"
-    , "autoprefixer": "0.8.x"
-    , "csso": "1.3.x"
-    , "uglify-js": "2.4.x"
-  }
+  "name": "bulls-and-cows",
+  "version": "0.0.1",
+  "description": "Logic Game",
+  "main": "index.js",
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "nbld": "0.0.2"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/isqua/bulls-and-cows.git"
+  },
+  "author": "isqua <isqua@isqua.ru>",
+  "bugs": {
+    "url": "https://github.com/isqua/bulls-and-cows/issues"
+  },
+  "homepage": "https://isqua.github.io/bulls-and-cows"
 }
