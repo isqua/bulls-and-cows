@@ -1,191 +1,289 @@
-(function(window){
+(function(window) {
+    /**
+     * Generate a random number
+     * @param {String} base All symbols that can be used
+     * @param {Number} length
+     */
+    function getSecret(base, length) {
+        var secret = '',
+            _base = base,
+            sign,
+            i;
 
-  "use strict";
-
-  var save, restore, resetStorage,
-
-  on = function (target, event, listener) {
-    target.addEventListener(event, listener, false);
-  },
-
-  isUnique = function (string) {
-    var used = {}, i, sign;
-
-    for (i = 0; i < string.length; i++) {
-      var sign = string[i];
-      if (used.hasOwnProperty(sign)) {
-        return false;
-      }
-      used[sign] = true;
-    }
-
-    return true;
-  },
-
-  generateNumber = function (base, length) {
-    var i, sign, number, used = {};
-
-    do {
-      sign = Math.floor(Math.random() * base.length);
-    } while (sign === 0);
-    used[sign] = true;
-    number = base[sign];
-
-    for (i = 1; i < length; i++) {
-      do {
-        sign = Math.floor(Math.random() * base.length);
-      } while (used[sign]);
-
-      used[sign] = true;
-      number += base[sign];
-    }
-
-    return number;
-
-  },
-
-  getAnimals = function (value, reference) {
-    var cows = 0,
-    bulls = 0,
-    length = value.length,
-    i, j;
-    for (i = 0; i < length; i++) {
-      for (j = 0; j < length; j++) {
-        if (value[i] === reference[j]) {
-          if (i === j) {
-            bulls++;
-          } else {
-            cows++;
-          }
+        for (i = 0; i < length; i++) {
+            sign = _base[Math.floor(Math.random() * _base.length)];
+            _base = _base.replace(sign, '');
+            secret += sign;
         }
-      }
-    }
-    return [bulls, cows, bulls === length ? true : false];
-  },
 
-  checker = function (base, length, saved) {
-    var number, reg, check;
-    length = parseInt(length, 10);
-
-    if (!isUnique(base)) {
-      throw new Error ('Base is not unique');
-    }
-
-    if (base.length <= length) {
-      throw new Error ('Length is more than number of symbols');
-    }
-
-    number = saved || generateNumber(base, length);
-    save('number', number);
-    reg = new RegExp("^["+base+"]{"+length+"}$");
-
-    check = function (guess) {
-      if (reg.test(guess) && guess[0] !== base[0] && isUnique(guess)) {
-        return getAnimals(guess, number);
-      } else {
-        return false;
-      }
-    };
-
-    return {
-      'check': check
-    };
-
-  },
-
-  write = function (output) {
-    return function (number, result) {
-      var li = document.createElement('li');
-      li.innerHTML = number + ': ' + result[0] + 'b, '+ result[1] + 'c';
-      output.insertBefore(li, output.firstChild);
-      save('output', output.innerHTML);
-    };
-  },
-
-  Game = function (settings, puzzle) {
-    var game,
-    elements = settings.elements,
-    guess = puzzle.elements.guess,
-
-    base = restore('base'),
-    length = restore('length'),
-    number = restore('number'),
-
-    output = puzzle.querySelector('#output'), 
-    put = write(output),
-    restart = function() {
-      output.innerHTML = '';
-      resetStorage();
-      game = start();
-    },
-
-    start = function (saved) {
-      var result,
-      base = elements.base.value,
-      length = elements.number.value;
-      result = checker(base, length, saved);
-      guess.value = '';
-      guess.focus();
-      save('base', base);
-      save('length', length);
-      return result;
-    };
-
-    if (base) {
-      elements.base.value = base;
-    }
-    if (length) {
-      elements.number.value = length;
-    }
-
-    game = start(number);
-
-    output.innerHTML = restore('output') || '';
-
-    on(settings, 'submit', function (event) {
-      event.preventDefault();
-      restart();
-    });
-
-    on(settings, 'reset', function (event) {
-      restart();
-    });
-
-    on(puzzle, 'submit', function (event) {
-      event.preventDefault();
-      var result = game.check(guess.value);
-      if (result) {
-        put(guess.value, result);
-        if (result[2] === true) {
-          if (confirm('You win! Start new game?')) {
-            restart();
-          }
+        if (secret.charAt(0) === base.charAt(0)) {
+            secret = secret.slice(1) + base.charAt(0);
         }
-        guess.value = '';
-      } else {
-        alert('Invalid number');
-      }
-      guess.focus();
-    });
 
-  };
-
-  if (window.localStorage) {
-    save = function (key, value) {
-      window.localStorage.setItem(key, value);
-    };
-    restore = function (key) {
-      return window.localStorage.getItem(key);
-    };
-    resetStorage = function () {
-      window.localStorage.clear();
+        return secret;
     }
-  } else {
-    save = function () {};
-    restore = function () {};
-    resetStorage = function () {};
-  }
-  
-  window.Game = Game;
+
+    /**
+     * Check if string has unique characters
+     * @param {String} str
+     * @returns {Boolean}
+     */
+    function isUnique(str) {
+        var hash = {};
+
+        return str.split('').every(function(char) {
+            if (hash[char]) {
+                return false;
+            }
+
+            return (hash[char] = true);
+        });
+    }
+
+    /**
+     * Check if guess matches rules
+     * @param {String} guess
+     * @param {String} base
+     * @param {String} length
+     * @returns {Boolean}
+     */
+    function isGuessValid(guess, base, length) {
+        return new RegExp("^["+base+"]{"+length+"}$").test(guess) && isUnique(guess);
+    }
+
+    /**
+     * Get number of bulls and cows
+     * @param {String} secret
+     * @param {String} guess
+     * @returns {{bulls: Number, cows: Number}}
+     */
+    function getAnimals(secret, guess) {
+        var cows = 0,
+            bulls = 0,
+            length = secret.length,
+            i, j;
+
+        for (i = 0; i < length; i++) {
+            for (j = 0; j < length; j++) {
+                if (secret[i] === guess[j]) {
+                    if (i === j) {
+                        bulls++;
+                    } else {
+                        cows++;
+                    }
+                }
+            }
+        }
+
+        return { bulls: bulls, cows: cows };
+    }
+
+    /**
+     * @param {String} secret
+     * @constructor
+     */
+    function Game(secret) {
+        this._base = Game.BASE;
+        this._length = Game.LENGTH;
+
+        if (secret && this.isValid(secret)) {
+            this._secret = secret;
+        } else {
+            this._secret = getSecret(this._base, this._length);
+        }
+
+        if (console && console.log) {
+            console.log(this._secret);
+        }
+    }
+
+    Game.BASE = '0123456789';
+    Game.LENGTH = 4;
+
+    Game.prototype.getSecret = function() {
+        return this._secret;
+    };
+
+    Game.prototype.isValid = function(guess) {
+        return isGuessValid(guess, this._base, this._length);
+    };
+
+    /**
+     * @param {String} guess
+     * @returns {Object}
+     */
+    Game.prototype.check = function(guess) {
+        var animals;
+
+        if ( ! this.isValid(guess)) {
+            return { invalid: guess };
+        }
+
+        animals = getAnimals(this._secret, guess);
+
+        if (animals.bulls === guess.length) {
+            animals.win = guess;
+        }
+
+        return animals;
+    };
+
+    /**
+     * @constructor
+     */
+    function GameStorage() {
+        if (window.localStorage) {
+            this.set = function(key, value) {
+                return window.localStorage.setItem(key, value);
+            };
+            this.get = function(key, value) {
+                return window.localStorage.getItem(key, value);
+            };
+            this.clear = function() {
+                return window.localStorage.clear();
+            };
+        } else {
+            this.set = this.stub;
+            this.get = this.stub;
+            this.clear = this.stub;
+        }
+    }
+
+    GameStorage.prototype.stub = function() {};
+
+    /**
+     * @constructor
+     */
+    function UI() {
+        this.initComponents();
+        this.initStorage();
+        this.initGame();
+    }
+
+    UI.prototype.initStorage = function() {
+        this._storage = new GameStorage();
+
+        this.getHistory().forEach(function(historyItem) {
+            this.output.appendChild(this.getItemElem.apply(this, historyItem));
+        }, this);
+
+        this.guess.value = this._storage.get('guess') || '';
+    };
+
+    UI.prototype.initComponents = function() {
+        this.form = document.forms.puzzle;
+        this.guess = this.form.elements.guess;
+        this.output = this.form.querySelector('.output');
+
+        this.form.addEventListener('submit', this.onFormSubmit.bind(this), false);
+        this.form.addEventListener('reset', this.reset.bind(this), false);
+        this.guess.addEventListener('keyup', this.saveGuess.bind(this), false);
+    };
+
+    UI.prototype.initGame = function() {
+        this._game = new Game(this._storage.get('secret'));
+        this._storage.set('secret', this._game.getSecret());
+    };
+
+    UI.prototype.onFormSubmit = function(event) {
+        var value = this.guess.value,
+            answer = this._game.check(value);
+
+        event.preventDefault();
+
+        if (answer.invalid) {
+            this.onInvalidInput(answer.invalid);
+            return;
+        }
+
+        if (! this.isUiFrozen()) {
+            this.addItem(value, answer);
+        }
+
+        if (answer.win) {
+            this.onWin();
+        }
+    };
+
+    UI.prototype.onInvalidInput = function(str) {
+        alert('The guess ' + str + ' is invalid');
+    };
+
+    UI.prototype.onWin = function() {
+        this.reachGoal('GAME_WIN', { attempts: this.getHistory().length });
+
+        if (confirm('You win! Start a new game?')) {
+            this.clear();
+            this.initGame();
+        } else {
+            this.freezeUi();
+        }
+    };
+
+    UI.prototype.saveGuess = function() {
+        this._storage.set('guess', this.guess.value.replace(/\s+/g, ''));
+    };
+
+    UI.prototype.reset = function() {
+        this.clear();
+        this.initGame();
+        this.reachGoal('RESET');
+    };
+
+    UI.prototype.clear = function() {
+        this.output.innerHTML = '';
+        this.guess.value = '';
+        this._storage.clear();
+    };
+
+    UI.prototype.addItem = function(guess, answer) {
+        var history = this.getHistory();
+
+        history.unshift([ guess, answer ]);
+
+        this.saveHistory(history);
+
+        this.output.insertBefore(this.getItemElem(guess, answer), this.output.firstChild);
+    };
+
+    UI.prototype.getItemElem = function(guess, answer) {
+        var item = document.createElement('li');
+
+        item.innerHTML = guess + ': ' + answer.bulls + 'b ' + answer.cows + 'c';
+
+        return item;
+    };
+
+    UI.prototype.freezeUi = function() {
+        this._frozen = true;
+    };
+
+    UI.prototype.isUiFrozen = function() {
+        return Boolean(this._frozen);
+    };
+
+    UI.prototype.getHistory = function() {
+        var history;
+
+        try {
+            history = JSON.parse(this._storage.get('history'));
+        } catch (e) {
+            history = [];
+        }
+
+        return [].concat(history).filter(Boolean);
+    };
+
+    UI.prototype.saveHistory = function(history) {
+        this._storage.set('history', JSON.stringify(history.filter(Boolean)));
+    };
+
+    UI.prototype.reachGoal = function() {
+        var counter = window.yaCounter32909025;
+
+        counter.reachGoal.apply(counter, arguments);
+    };
+
+    window.UI = UI;
 
 })(window);
