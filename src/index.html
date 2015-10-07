@@ -1,25 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Bulls & Cows</title>
-  <link href='https://fonts.googleapis.com/css?family=PT+Mono' rel='stylesheet' type='text/css'>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <title>Bulls & Cows</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link href='https://fonts.googleapis.com/css?family=PT+Mono' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <form name="settings">
-    <input tabindex="3" name="number" type="number" min="3" max="8" value="4">
-    <input tabindex="4" name="base" type="text" pattern="^[0-9a-zA-Z]{4,}$" value="0123456789">
-    <button tabindex="5" type="submit" name="start">Start</button>
-    <button tabindex="6" type="reset" name="default">Default</button>
-  </form>
-  <form name="puzzle">
-    <input tabindex="1" autocomplete="off" name="guess" type="text" value="" autofocus>
-    <button tabindex="2" type="submit" name="check">Check</button>
-    <ul class="output" id="output">
-    </ul>
-  </form>
-  <script src="script.js"></script>
-  <script>Game(document.forms.settings, document.forms.puzzle);</script>
+    <main class="game">
+        <form name="puzzle" class="puzzle">
+            <section class="guess-area">
+                <input class="guess" name="guess" tabindex="1" autocorrect="off" autocapitalize="off" spellcheck="false" size="4" type="tel" value="" autofocus>
+                <button class="check" type="submit" name="check" tabindex="2">Check</button>
+            </section>
+            <ul class="output">
+            </ul>
+            <section class="actions">
+                <button class="restart" type="reset">Restart</button>
+            </section>
+        </form>
+    </main>
+    <script src="script.js"></script>
+    <script>var ui = new UI();</script>
 </body>
 </html>
