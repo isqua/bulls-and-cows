@@ -7,4 +7,4 @@ nbld(gulp, {
     metrika: 32909025
 });
 
-gulp.task('production', [ 'html:production' ]);
+gulp.task('production', [ 'html:production', 'appcache' ]);
