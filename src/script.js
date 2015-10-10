@@ -281,7 +281,7 @@
     UI.prototype.reachGoal = function() {
         var counter = window.yaCounter32909025;
 
-        counter.reachGoal.apply(counter, arguments);
+        counter && counter.reachGoal.apply(counter, arguments);
     };
 
     window.UI = UI;
