@@ -91,10 +91,6 @@
         } else {
             this._secret = getSecret(this._base, this._length);
         }
-
-        if (console && console.log) {
-            console.log(this._secret);
-        }
     }
 
     Game.BASE = '0123456789';
@@ -191,7 +187,18 @@
 
         event.preventDefault();
 
-        if (answer.invalid) {
+        if (value.replace(/\s+/, '') === '') {
+            return;
+        }
+
+        if (this.isUsed(value)) {
+            return;
+        }
+
+        this.guess.value = '';
+        this.guess.focus();
+
+        if (Object.prototype.hasOwnProperty.call(answer, 'invalid')) {
             this.onInvalidInput(answer.invalid);
             return;
         }
@@ -234,6 +241,7 @@
         this.output.innerHTML = '';
         this.guess.value = '';
         this._storage.clear();
+        this.guess.focus();
     };
 
     UI.prototype.addItem = function(guess, answer) {
@@ -242,6 +250,7 @@
         history.unshift([ guess, answer ]);
 
         this.saveHistory(history);
+        this.markUsed(guess);
 
         this.output.insertBefore(this.getItemElem(guess, answer), this.output.firstChild);
     };
@@ -265,13 +274,32 @@
     UI.prototype.getHistory = function() {
         var history;
 
+        if (this._history) {
+            return this._history;
+        }
+
         try {
             history = JSON.parse(this._storage.get('history'));
         } catch (e) {
             history = [];
         }
 
-        return [].concat(history).filter(Boolean);
+        this._history = [].concat(history).filter(Boolean);
+        this._used = {};
+
+        this._history.forEach(function(item) {
+            this.markUsed(item[0]);
+        }, this);
+
+        return this._history;
+    };
+
+    UI.prototype.isUsed = function(number) {
+        return Boolean(this._used[String(number)]);
+    };
+
+    UI.prototype.markUsed = function(number) {
+        this._used[String(number)] = true;
     };
 
     UI.prototype.saveHistory = function(history) {
@@ -281,7 +309,7 @@
     UI.prototype.reachGoal = function() {
         var counter = window.yaCounter32909025;
 
-        counter.reachGoal.apply(counter, arguments);
+        counter && counter.reachGoal.apply(counter, arguments);
     };
 
     window.UI = UI;
