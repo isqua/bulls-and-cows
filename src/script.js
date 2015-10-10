@@ -191,6 +191,9 @@
             return;
         }
 
+        this.guess.value = '';
+        this.guess.focus();
+
         if (Object.prototype.hasOwnProperty.call(answer, 'invalid')) {
             this.onInvalidInput(answer.invalid);
             return;
@@ -234,6 +237,7 @@
         this.output.innerHTML = '';
         this.guess.value = '';
         this._storage.clear();
+        this.guess.focus();
     };
 
     UI.prototype.addItem = function(guess, answer) {
