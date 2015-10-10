@@ -249,6 +249,7 @@
         this.guess.value = '';
         this._storage.clear();
         this.guess.focus();
+        this.unfreeze();
     };
 
     UI.prototype.addItem = function(guess, answer) {
@@ -276,6 +277,10 @@
 
     UI.prototype.freezeUi = function() {
         this._frozen = true;
+    };
+
+    UI.prototype.unfreeze = function() {
+        this._frozen = false;
     };
 
     UI.prototype.isUiFrozen = function() {
