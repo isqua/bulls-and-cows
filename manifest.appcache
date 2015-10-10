@@ -1,3 +1,10 @@
 CACHE MANIFEST
+
+CACHE:
 a6015010db155405d6aa369f5b1c5ab0.css
 dafefde674c7091ed02b016aaca5f3c2.js
+https://fonts.googleapis.com/css?family=PT+Mono
+
+NETWORK:
+f/*.png
+favicon.ico
