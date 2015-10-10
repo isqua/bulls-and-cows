@@ -191,6 +191,10 @@
             return;
         }
 
+        if (this.isUsed(value)) {
+            return;
+        }
+
         this.guess.value = '';
         this.guess.focus();
 
@@ -246,6 +250,7 @@
         history.unshift([ guess, answer ]);
 
         this.saveHistory(history);
+        this.markUsed(guess);
 
         this.output.insertBefore(this.getItemElem(guess, answer), this.output.firstChild);
     };
@@ -269,13 +274,32 @@
     UI.prototype.getHistory = function() {
         var history;
 
+        if (this._history) {
+            return this._history;
+        }
+
         try {
             history = JSON.parse(this._storage.get('history'));
         } catch (e) {
             history = [];
         }
 
-        return [].concat(history).filter(Boolean);
+        this._history = [].concat(history).filter(Boolean);
+        this._used = {};
+
+        this._history.forEach(function(item) {
+            this.markUsed(item[0]);
+        }, this);
+
+        return this._history;
+    };
+
+    UI.prototype.isUsed = function(number) {
+        return Boolean(this._used[String(number)]);
+    };
+
+    UI.prototype.markUsed = function(number) {
+        this._used[String(number)] = true;
     };
 
     UI.prototype.saveHistory = function(history) {
