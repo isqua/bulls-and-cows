@@ -91,10 +91,6 @@
         } else {
             this._secret = getSecret(this._base, this._length);
         }
-
-        if (console && console.log) {
-            console.log(this._secret);
-        }
     }
 
     Game.BASE = '0123456789';
@@ -191,7 +187,11 @@
 
         event.preventDefault();
 
-        if (answer.invalid) {
+        if (value.replace(/\s+/, '') === '') {
+            return;
+        }
+
+        if (Object.prototype.hasOwnProperty.call(answer, 'invalid')) {
             this.onInvalidInput(answer.invalid);
             return;
         }
