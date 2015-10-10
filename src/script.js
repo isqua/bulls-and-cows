@@ -153,14 +153,23 @@
     function UI() {
         this.initComponents();
         this.initStorage();
+        this.loadState();
         this.initGame();
     }
 
     UI.prototype.initStorage = function() {
         this._storage = new GameStorage();
+    };
+
+    UI.prototype.loadState = function() {
+        this._used = {};
 
         this.getHistory().forEach(function(historyItem) {
+            this.markUsed(historyItem[0]);
             this.output.appendChild(this.getItemElem.apply(this, historyItem));
+            if (historyItem[1].bulls === this._length) {
+                this.freezeUi();
+            }
         }, this);
 
         this.guess.value = this._storage.get('guess') || '';
@@ -248,8 +257,10 @@
         this.output.innerHTML = '';
         this.guess.value = '';
         this._storage.clear();
+        this._history = [];
+        this._used = {};
+        this.unfreezeUi();
         this.guess.focus();
-        this.unfreeze();
     };
 
     UI.prototype.addItem = function(guess, answer) {
@@ -279,7 +290,7 @@
         this._frozen = true;
     };
 
-    UI.prototype.unfreeze = function() {
+    UI.prototype.unfreezeUi = function() {
         this._frozen = false;
     };
 
@@ -301,11 +312,6 @@
         }
 
         this._history = [].concat(history).filter(Boolean);
-        this._used = {};
-
-        this._history.forEach(function(item) {
-            this.markUsed(item[0]);
-        }, this);
 
         return this._history;
     };
