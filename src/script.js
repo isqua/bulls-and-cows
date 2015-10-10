@@ -173,7 +173,7 @@
 
         this.form.addEventListener('submit', this.onFormSubmit.bind(this), false);
         this.form.addEventListener('reset', this.reset.bind(this), false);
-        this.guess.addEventListener('keyup', this.saveGuess.bind(this), false);
+        this.guess.addEventListener('keyup', this.onChange.bind(this), false);
     };
 
     UI.prototype.initGame = function() {
@@ -195,17 +195,16 @@
             return;
         }
 
-        this.guess.value = '';
-        this.guess.focus();
-
         if (Object.prototype.hasOwnProperty.call(answer, 'invalid')) {
             this.onInvalidInput(answer.invalid);
+            this.guess.focus();
             return;
         }
 
-        if (! this.isUiFrozen()) {
-            this.addItem(value, answer);
-        }
+        this.guess.value = '';
+        this.guess.focus();
+
+        this.addItem(value, answer);
 
         if (answer.win) {
             this.onWin();
@@ -213,7 +212,7 @@
     };
 
     UI.prototype.onInvalidInput = function(str) {
-        alert('The guess ' + str + ' is invalid');
+        this.showNotification('error', 'The guess ' + str.slice(0, this._length) + ' is invalid');
     };
 
     UI.prototype.onWin = function() {
@@ -224,6 +223,14 @@
             this.initGame();
         } else {
             this.freezeUi();
+        }
+    };
+
+    UI.prototype.onChange = function(event) {
+        this.saveGuess();
+
+        if (event.keyCode !== 13) {
+            this.hideNotifications();
         }
     };
 
@@ -246,6 +253,10 @@
 
     UI.prototype.addItem = function(guess, answer) {
         var history = this.getHistory();
+
+        if (this.isUiFrozen()) {
+            return;
+        }
 
         history.unshift([ guess, answer ]);
 
@@ -304,6 +315,35 @@
 
     UI.prototype.saveHistory = function(history) {
         this._storage.set('history', JSON.stringify(history.filter(Boolean)));
+    };
+
+    UI.prototype.showNotification = function(type, message) {
+        if (this.isUiFrozen()) {
+            return;
+        }
+
+        this.hideNotifications();
+
+        var notification = document.createElement('div');
+
+        notification.classList.add('notification');
+        notification.innerHTML = message;
+
+        this.getNotificationContainer().appendChild(notification);
+
+        window.requestAnimationFrame(function() {
+            notification.classList.add('notification-' + type);
+        });
+    };
+
+    UI.prototype.hideNotifications = function() {
+        this.getNotificationContainer().innerHTML = '';
+    };
+
+
+    UI.prototype.getNotificationContainer = function() {
+        return this._notificationContainer ||
+            (this._notificationContainer = document.querySelector('.notification-container'));
     };
 
     UI.prototype.reachGoal = function() {
